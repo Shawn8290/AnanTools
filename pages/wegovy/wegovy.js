@@ -1,4 +1,4 @@
-Wegovy// 使用 IIFE 包覆，確保變數與其他頁面隔離
+// 使用 IIFE 包覆，確保變數與其他頁面隔離
 (function() {
   const presets = {
     "0.25": { standardMg: 0.25, clicksPerStdDose: 36, colorName: "淺藍色", totalDoses: 4 },

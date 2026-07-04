@@ -1,43 +1,43 @@
-# AnanTools
+# AnanTools 護理與行政實用工具集 🩺
 
-A collection of useful tools and utilities.
+這是一個專為臨床護理人員與行政管理設計的純前端 Web 工具集。所有運算與資料處理皆在瀏覽器本地端完成，無需依賴後端伺服器，確保資料隱私與安全性。
 
-## 🛠️ About
-
-AnanTools is a project featuring various tools and utilities designed to help with daily tasks and development workflows.
-
-## 🚀 Getting Started
-
-1. Clone the repository:
-```bash
-git clone https://github.com/Shawn8290/AnanTools.git
-```
-
-2. Navigate to the project directory:
-```bash
-cd AnanTools
-```
-
-3. Follow the specific tool's instructions to get started.
-
-## 📝 Features
-
-- Multiple utility tools
-- Easy to use interface
-- Well-organized codebase
-
-## 🤝 Contributing
-
-Feel free to fork this repository and submit pull requests with improvements or new features.
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
-## 👤 Author
-
-[Shawn8290](https://github.com/Shawn8290)
+👉 **線上網頁版 (GitHub Pages)**：[https://shawn8290.github.io/AnanTools/](https://shawn8290.github.io/AnanTools/) 
 
 ---
 
-Happy coding! 🎉 
+## 🛠️ 核心功能簡介
+
+### 1. 猛健樂 (Mounjaro) 劑量與格數換算
+輔助臨床精準給藥的計算工具。只需選擇筆型劑量並輸入目標施打量，系統即可自動換算：
+* 需轉動的正確格數
+* 實際注射體積 (cc)
+* 該支筆剩餘可施打次數與餘格
+
+### 2. 週纖達 (Wegovy) 劑量與格數換算
+針對 Wegovy 筆型注射劑（0.25mg ~ 2.4mg 各色包裝）的格數換算器。
+* 內建各包裝標準劑量與總格數參數（一支全新筆含 4 次標準劑量）。
+* 防呆機制計算目標劑量格數，並提醒開封後 6 週內的使用期限。
+
+### 3. 排班薪資與津貼計算機
+專為醫療院所排班制度設計的薪資試算工具。支援多種職務（護理長、護理人員、行政、護佐、工讀生）。
+* 自動帶入各職級預設底薪與夜班津貼。
+* 快速勾選特別津貼（衛教師、Leader）、執照加給。
+* 自動試算新制月薪、加班費（1.33倍/1.66倍）、特休/補休換算及年終預估。
+
+### 4. 產檢資料批次上傳 - 格式檢核工具
+為健保申報作業設計的 Excel 批次驗證工具。在上傳至健保系統前，透過前端預先抓錯，大幅降低退件率。
+* 支援上傳 `.xlsx` 檔案，透過 SheetJS 本地解析。
+* 自動檢核身分證字號格式、7 碼民國日期、必填欄位及 BMI 數值合理性。
+* 一目了然的錯誤報告，精準定位「第幾列、哪個欄位」發生錯誤。
+
+---
+
+## 💻 技術架構
+* **純前端實作**：HTML5, CSS3, Vanilla JavaScript
+* **單頁應用程式 (SPA)**：透過 JavaScript 動態路由載入模組，無須換頁。
+* **響應式設計 (RWD)**：支援桌機與手機瀏覽，內建左側收摺選單。
+* **第三方開源庫**：SheetJS (XLSX解析), PDF.js, gif.js
+
+## 👤 作者
+[Shawn8290](https://github.com/Shawn8290)

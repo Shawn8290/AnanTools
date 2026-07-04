@@ -6,6 +6,13 @@
         script.onload = () => console.log("SheetJS loaded successfully.");
         document.head.appendChild(script);
     }
+    
+    // --- 動態載入 JSZip 函式庫 (用來打包ZIP) ---
+    if (typeof JSZip === 'undefined') {
+        const zipScript = document.createElement('script');
+        zipScript.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+        document.head.appendChild(zipScript);
+    }
 
     // --- 2. DOM 元素綁定 ---
     const uploadInput = document.getElementById('uploadFile');
@@ -17,31 +24,30 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            // 顯示讀取中提示
             reportArea.innerHTML = '<div style="color: #4a5568;">⏳ 資料讀取與檢核中，請稍候...</div>';
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    // 確保 XLSX 已經成功從 CDN 載入
-                    if (typeof XLSX === 'undefined') {
-                        reportArea.innerHTML = '<div class="error-msg">❌ 系統正在載入 Excel 處理模組，請等待幾秒鐘後重新選擇檔案。</div>';
-                        uploadInput.value = ''; // 清空 input 讓使用者可以重選
+                    if (typeof XLSX === 'undefined' || typeof JSZip === 'undefined') {
+                        reportArea.innerHTML = '<div class="error-msg">❌ 系統正在載入處理模組，請等待幾秒鐘後重新選擇檔案。</div>';
+                        uploadInput.value = ''; 
                         return;
                     }
 
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, {type: 'array'});
                     
-                    // 假設資料都在第一個工作表 (Sheet)
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     
-                    // 將 Sheet 轉為二維陣列，header: 1 代表保留原本的欄位順序
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                     
-                    // 執行驗證
-                    validateData(jsonData);
+                    // 取得原始檔名 (去除副檔名)
+                    const baseFileName = file.name.replace(/\.[^/.]+$/, "");
+                    
+                    // 執行驗證，並把原始檔名傳過去
+                    validateData(jsonData, null, baseFileName);
                 } catch (error) {
                     reportArea.innerHTML = `<div class="error-msg">❌ 檔案解析失敗，請確認檔案格式是否正確。(${error.message})</div>`;
                 }
@@ -50,23 +56,28 @@
         });
     }
 
-    // --- 4. 核心檢核邏輯 ---
-    function validateData(data, validTownCodes) {
+    // --- 4. 核心檢核邏輯 (維持原始邏輯完全不變) ---
+    function validateData(data, validTownCodes, baseFileName) {
         reportArea.innerHTML = '';
         let errorLog = [];
+        let validRows = []; // 用來儲存過濾掉空白列的乾淨資料，以備後續分割
 
-        // 從 index 1 開始 (跳過 index 0 的表頭)
+        // 保留表頭 (第 0 列)
+        if (data.length > 0) {
+            validRows.push(data[0]);
+        }
+
         for (let i = 1; i < data.length; i++) {
             const row = data[i];
-            const rowNum = i + 1; // 實際在 Excel 裡面的列號
+            const rowNum = i + 1;
 
-            // 避免讀到完全空白的列 (檢查前兩個欄位是否有值)
+            // 避免讀到完全空白的列
             if (!row || row.length === 0 || (!row[0] && !row[1])) continue; 
 
-            // 輔助函式：安全地取得欄位值，去除前後空白，若無值則回傳空字串
+            validRows.push(row);
+
             const getVal = (index) => (row[index] !== undefined && row[index] !== null) ? row[index].toString().trim() : '';
 
-            // 輔助函式：通用欄位檢查 (檢查必填與最大長度)
             const checkField = (val, colName, maxLen, isRequired = false) => {
                 if (isRequired && !val) {
                     errorLog.push(`第 ${rowNum} 列：【${colName}】為必填項目`);
@@ -76,26 +87,24 @@
                 }
             };
 
-            // 取出欄位值
-            const name        = getVal(0);   // A
-            const idStr       = getVal(1);   // B
-            const birthDate   = getVal(2);   // C
-            const phone1      = getVal(3);   // D
-            const phone2      = getVal(4);   // E
-            const townCode    = getVal(5);   // F
-            const address     = getVal(6);   // G
-            const hospCode    = getVal(7);   // H
-            const checkDate   = getVal(8);   // I
-            const pregWeeks   = getVal(9);   // J
-            const height      = getVal(10);  // K
-            const weight      = getVal(11);  // L
-            const bmi         = getVal(12);  // M
-            const cardSeq     = getVal(13);  // N
+            const name        = getVal(0);   
+            const idStr       = getVal(1);   
+            const birthDate   = getVal(2);   
+            const phone1      = getVal(3);   
+            const phone2      = getVal(4);   
+            const townCode    = getVal(5);   
+            const address     = getVal(6);   
+            const hospCode    = getVal(7);   
+            const checkDate   = getVal(8);   
+            const pregWeeks   = getVal(9);   
+            const height      = getVal(10);  
+            const weight      = getVal(11);  
+            const bmi         = getVal(12);  
+            const cardSeq     = getVal(13);  
 
             // ==========================================
-            // 依照規則逐一檢核
+            // 完全保留原始的規則檢核
             // ==========================================
-
             checkField(name, '姓名', 30, true);
             
             checkField(idStr, '身分證/統一證號', 10, true);
@@ -148,12 +157,70 @@
             }
         }
 
-        // --- 5. 輸出報告 ---
+        // --- 5. 判斷輸出報告或執行分割打包 ---
         if (errorLog.length === 0) {
-            reportArea.innerHTML = '<div class="success-msg">✅ 所有資料均符合規格要求！可以安心上傳申報。</div>';
+            reportArea.innerHTML = '<div class="success-msg">✅ 格式完全正確！正在自動為您分割資料並打包成 ZIP...</div>';
+            splitAndZipData(validRows, baseFileName);
         } else {
             const errorHtml = errorLog.map(msg => `<div class="error-msg">❌ ${msg}</div>`).join('');
             reportArea.innerHTML = `<h3 style="color: #c53030; border-bottom: 1px solid #fc8181; padding-bottom: 10px;">共發現 ${errorLog.length} 個錯誤：</h3>` + errorHtml;
+        }
+    }
+
+    // --- 6. 分割資料與打包 ZIP 邏輯 ---
+    async function splitAndZipData(validRows, baseFileName) {
+        try {
+            if (validRows.length <= 1) {
+                reportArea.innerHTML += '<div class="error-msg" style="margin-top:10px;">⚠️ 檔案內沒有可轉換的資料。</div>';
+                return;
+            }
+
+            const header = validRows[0];         
+            const dataRows = validRows.slice(1); 
+            const chunkSize = 30;                
+            
+            const zip = new JSZip();
+            let partCount = 0;
+
+            for (let i = 0; i < dataRows.length; i += chunkSize) {
+                partCount++;
+                const chunk = dataRows.slice(i, i + chunkSize);
+                
+                // 將表頭組合至該批次的資料最上方
+                const sheetData = [header, ...chunk];
+                
+                const ws = XLSX.utils.aoa_to_sheet(sheetData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+                
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                
+                const fileName = `${baseFileName}_${partCount}.xlsx`;
+                zip.file(fileName, wbout);
+            }
+
+            const zipContent = await zip.generateAsync({ type: "blob" });
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(zipContent);
+            link.download = `${baseFileName}_自動分割.zip`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            reportArea.innerHTML = `
+                <div class="success-msg" style="text-align:left; padding:20px;">
+                    <div style="font-size:1.2em; margin-bottom:10px;">✅ 檢核與分割成功！</div>
+                    <ul style="color:#2f855a; font-weight:normal; margin:0; line-height:1.6;">
+                        <li>總有效筆數：<b>${dataRows.length}</b> 筆</li>
+                        <li>分割檔案數：<b>${partCount}</b> 個檔案 (.xlsx)</li>
+                        <li>已自動為您下載打包好的 <b>${baseFileName}_自動分割.zip</b></li>
+                    </ul>
+                </div>`;
+
+        } catch (error) {
+            console.error("分割打包過程發生錯誤:", error);
+            reportArea.innerHTML += `<div class="error-msg" style="margin-top:10px;">❌ 分割打包失敗：${error.message}</div>`;
         }
     }
 })();

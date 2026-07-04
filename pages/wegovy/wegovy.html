@@ -1,0 +1,74 @@
+Wegovy<style>
+  /* 針對 Wegovy 工具的局部排版樣式 */
+  .wegovy-card {
+    border: 1px solid var(--border-color, #e2e8f0);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    background: #fff;
+    max-width: 500px;
+  }
+  .wegovy-card label {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #333;
+  }
+  .wegovy-card input, .wegovy-card select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  .wegovy-result {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #f0fcfb;
+    border: 1px solid #cce8e6;
+    text-align: center;
+  }
+  .wegovy-highlight {
+    color: #d63384; 
+    font-weight: bold; 
+    font-size: 1.4rem;
+  }
+  .wegovy-note {
+    font-size: 0.8rem; 
+    color: #666; 
+    margin-top: 15px; 
+    line-height: 1.5;
+  }
+</style>
+
+<div class="tool-section">
+  <h2 style="margin-bottom: 20px; color:#004f59;">週纖達 (Wegovy) 格數換算</h2>
+
+  <div class="wegovy-card">
+    <label for="wegovyPreset">選擇筆型劑量 (依據包裝顏色)</label>
+    <select id="wegovyPreset">
+      <option value="0.25">0.25 mg 筆 (淺藍色 / 總144格)</option>
+      <option value="0.5">0.5 mg 筆 (紅色 / 總144格)</option>
+      <option value="1.0">1.0 mg 筆 (橘色 / 總288格)</option>
+      <option value="1.7">1.7 mg 筆 (藍色 / 總288格)</option>
+      <option value="2.4">2.4 mg 筆 (灰色 / 總288格)</option>
+    </select>
+
+    <label for="wegovyTargetMg">輸入目標施打劑量 (mg)</label>
+    <input id="wegovyTargetMg" type="number" step="any" placeholder="例如：0.5">
+
+    <button id="wegovyCalcBtn" class="btn" style="width: 100%; margin-top: 18px; padding: 12px; background-color: #00857a; font-weight: bold;">計算格數</button>
+
+    <div id="wegovyOut" class="wegovy-result" style="display:none"></div>
+    
+    <div class="wegovy-note">
+      * <strong>修正說明</strong>：一支全新筆含 4 次標準劑量，故總格數為單次格數 x 4。<br>
+      * 計算結果僅供參考。實際操作請務必遵照醫師指示。<br>
+      * 開封後請務必於 6 週內使用完畢。
+    </div>
+  </div>
+</div>

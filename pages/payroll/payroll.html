@@ -1,0 +1,189 @@
+<style>
+    /* 針對排班薪資計算的局部樣式 */
+    .payroll-container {
+        max-width: 600px;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    .payroll-container h2 {
+        text-align: center;
+        color: var(--primary-color, #2c3e50);
+        margin-top: 0;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+    }
+    .payroll-container .form-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f1f3f5;
+        border-radius: 8px;
+    }
+    .payroll-container label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: var(--primary-color, #2c3e50);
+    }
+    .payroll-container select, .payroll-container input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 6px;
+        font-size: 16px;
+        background-color: white;
+        box-sizing: border-box; 
+    }
+    .payroll-container .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: white;
+        padding: 10px;
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 6px;
+    }
+    .payroll-container .checkbox-item {
+        display: flex;
+        align-items: center;
+    }
+    .payroll-container .checkbox-item input {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+    .payroll-container .checkbox-item label {
+        margin: 0;
+        font-weight: normal;
+        cursor: pointer;
+    }
+    .payroll-container .fixed-value {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        color: #495057;
+        font-family: monospace;
+        font-size: 1.1em;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .payroll-container .result-box {
+        margin-top: 25px;
+        border-top: 2px dashed var(--border-color, #dee2e6);
+        padding-top: 20px;
+        display: none;
+    }
+    .payroll-container .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .payroll-container .result-table th, .payroll-container .result-table td {
+        padding: 10px;
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+        text-align: right;
+    }
+    .payroll-container .result-table th {
+        text-align: left;
+        color: #666;
+        font-weight: normal;
+        width: 60%;
+    }
+    .payroll-container .result-table td {
+        font-weight: bold;
+        color: #000;
+        font-family: monospace;
+        font-size: 1.1em;
+    }
+    .payroll-container .highlight {
+        color: #e74c3c !important;
+    }
+    .payroll-container .total-row td {
+        background-color: #e8f4f8;
+        color: var(--primary-color, #2c3e50);
+        font-size: 1.2em;
+        border-top: 2px solid #3498db;
+    }
+    .payroll-container .info-tag {
+        font-size: 0.85em;
+        color: #7f8c8d;
+        margin-left: 5px;
+    }
+    .payroll-container .hidden {
+        display: none;
+    }
+</style>
+
+<div class="tool-section payroll-container">
+    <h2>薪資計算機</h2>
+
+    <div class="form-section">
+        <label for="roleSelect">請選擇職務</label>
+        <select id="roleSelect">
+            <option value="nurse">護理人員</option>
+            <option value="assistant">護佐</option>
+            <option value="admin">病歷室事務員與行政人員</option>
+            <option value="student">工讀生</option>
+            <option value="head_nurse">護理長</option>
+        </select>
+    </div>
+
+    <div id="regularInputs" class="form-section">
+        <label id="baseSalaryLabel">舊制底薪</label>
+        <div id="baseSalaryDisplay" class="fixed-value">26400</div>
+        
+        <div id="special-section">
+            <br>
+            <label>特別津貼</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="special_edu" value="2000">
+                    <label for="special_edu">衛教師 (+2000)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="special_lead" value="2000">
+                    <label for="special_lead">Leader (+2000)</label>
+                </div>
+            </div>
+            <div id="hidden-allowance-hint" style="font-size:0.8em; color:red; margin-top:5px; display:none;">
+                * 另含隱藏特別津貼 $5,000
+            </div>
+        </div>
+
+        <div id="license-section">
+            <br>
+            <label>執照加給</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="license_check" value="3000" checked>
+                    <label for="license_check">執照加給 (+3000)</label>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <label>伙食津貼</label>
+        <div class="fixed-value">3600</div>
+    </div>
+
+    <div id="studentInputs" class="form-section hidden">
+        <label for="hourlyRateSelect">請選擇時薪</label>
+        <select id="hourlyRateSelect">
+            <option value="196">196</option>
+            <option value="200">200</option>
+            <option value="205">205</option>
+            <option value="210">210</option>
+            <option value="215">215</option>
+            <option value="220">220</option>
+            <option value="230">230</option>
+        </select>
+    </div>
+
+    <button id="calcPayrollBtn" class="btn" style="width: 100%; padding: 14px; font-size: 18px; margin-top: 10px;">計算薪資</button>
+
+    <div id="resultBox" class="result-box"></div>
+</div>

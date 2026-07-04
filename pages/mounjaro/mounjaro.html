@@ -1,0 +1,58 @@
+<style>
+  /* 針對此工具的局部排版樣式 */
+  .mounjaro-card {
+      border: 1px solid var(--border-color, #e2e8f0);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      background: #fff;
+      max-width: 500px;
+  }
+  .mounjaro-card label {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
+  }
+  .mounjaro-card input, .mounjaro-card select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 6px;
+      box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
+  }
+  .mounjaro-result {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #f2f7ff;
+      border: 1px solid #d8e6ff;
+      text-align: center;
+  }
+  .mounjaro-highlight {
+      color: #d63384; 
+      font-weight: bold;
+  }
+</style>
+
+<div class="tool-section">
+    <h2 style="margin-bottom: 20px;">猛健樂 (Mounjaro) 格數換算</h2>
+
+    <div class="mounjaro-card">
+        <label>選擇筆型劑量 (每支總容量 4 劑 × 60 格 / 共 2.4 cc)</label>
+        <select id="preset">
+            <option value="2.5">2.5 mg</option>
+            <option value="5">5 mg</option>
+            <option value="7.5">7.5 mg</option>
+            <option value="10">10 mg</option>
+        </select>
+
+        <label>輸入目標劑量 (mg)</label>
+        <input id="targetMg" type="number" step="any" placeholder="例如 2 mg">
+
+        <button id="calcBtn" class="btn" style="width: 100%; margin-top: 20px; padding: 12px;">計算</button>
+
+        <div id="out" class="mounjaro-result" style="display:none"></div>
+    </div>
+</div>

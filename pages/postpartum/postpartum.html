@@ -1,0 +1,233 @@
+<style>
+    .postpartum-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        box-sizing: border-box;
+    }
+
+    .postpartum-container h2 {
+        margin: 0 0 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary-color, #2b6cb0);
+        color: var(--primary-color, #2b6cb0);
+    }
+
+    .postpartum-description,
+    .postpartum-note {
+        color: #4a5568;
+        line-height: 1.6;
+    }
+
+    .postpartum-date-groups {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin: 24px 0;
+    }
+
+    .postpartum-date-group {
+        margin: 0;
+        padding: 18px;
+        border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 10px;
+        background: #f7fafc;
+    }
+
+    .postpartum-date-group legend {
+        padding: 0 8px;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .postpartum-date-selects {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .postpartum-date-selects label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .postpartum-date-selects select {
+        width: 100%;
+        min-height: 44px;
+        padding: 8px;
+        border: 1px solid #cbd5e0;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #2d3748;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    .postpartum-calculate {
+        width: 100%;
+        min-height: 48px;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .postpartum-result {
+        margin-top: 24px;
+        padding: 22px;
+        border: 1px solid #bee3f8;
+        border-radius: 12px;
+        background: #ebf8ff;
+    }
+
+    .postpartum-result[hidden] {
+        display: none;
+    }
+
+    .postpartum-result.is-error,
+    .postpartum-result.is-expired {
+        border-color: #feb2b2;
+        background: #fff5f5;
+    }
+
+    .postpartum-days {
+        margin: 0 0 16px;
+        text-align: center;
+        font-size: 1.15rem;
+    }
+
+    .postpartum-days-number {
+        display: inline-block;
+        margin: 0 5px;
+        font-size: 2.25rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #1a365d;
+    }
+
+    .postpartum-service-title {
+        margin: 0 0 12px;
+        text-align: center;
+        font-size: 1.25rem;
+    }
+
+    .postpartum-codes {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin: 16px 0;
+    }
+
+    .postpartum-code {
+        min-width: 120px;
+        padding: 12px 18px;
+        border: 2px solid var(--primary-color, #2b6cb0);
+        border-radius: 10px;
+        background: #ffffff;
+        text-align: center;
+    }
+
+    .postpartum-code-label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.82rem;
+        color: #4a5568;
+    }
+
+    .postpartum-code-value {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1a365d;
+    }
+
+    .postpartum-details {
+        margin: 16px 0 0;
+        padding-left: 1.3em;
+        line-height: 1.7;
+    }
+
+    .postpartum-note {
+        margin: 18px 0 0;
+        padding-top: 14px;
+        border-top: 1px solid #cbd5e0;
+        font-size: 0.9rem;
+    }
+
+    .postpartum-alert-title {
+        margin: 0 0 10px;
+        font-size: 1.2rem;
+        color: #9b2c2c;
+    }
+
+    @media (max-width: 680px) {
+        .postpartum-container {
+            padding: 20px 16px;
+        }
+
+        .postpartum-date-groups {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .postpartum-date-selects {
+            grid-template-columns: 1fr;
+        }
+
+        .postpartum-code {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<section class="tool-section postpartum-container" id="postpartum-calculator">
+    <h2>產後健康照護服務計算機</h2>
+    <p class="postpartum-description">依服務日期與生產日期，計算產後天數及建議填報的產後健康照護服務項目。</p>
+
+    <div class="postpartum-date-groups">
+        <fieldset class="postpartum-date-group">
+            <legend>服務日期</legend>
+            <div class="postpartum-date-selects">
+                <div>
+                    <label for="postpartum-service-year">民國年</label>
+                    <select id="postpartum-service-year" aria-label="服務日期民國年"></select>
+                </div>
+                <div>
+                    <label for="postpartum-service-month">月</label>
+                    <select id="postpartum-service-month" aria-label="服務日期月份"></select>
+                </div>
+                <div>
+                    <label for="postpartum-service-day">日</label>
+                    <select id="postpartum-service-day" aria-label="服務日期日期"></select>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="postpartum-date-group">
+            <legend>生產日期</legend>
+            <div class="postpartum-date-selects">
+                <div>
+                    <label for="postpartum-delivery-year">民國年</label>
+                    <select id="postpartum-delivery-year" aria-label="生產日期民國年"></select>
+                </div>
+                <div>
+                    <label for="postpartum-delivery-month">月</label>
+                    <select id="postpartum-delivery-month" aria-label="生產日期月份"></select>
+                </div>
+                <div>
+                    <label for="postpartum-delivery-day">日</label>
+                    <select id="postpartum-delivery-day" aria-label="生產日期日期"></select>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <button type="button" class="btn postpartum-calculate" id="postpartum-calculate-button">計算</button>
+    <div class="postpartum-result" id="postpartum-result" role="status" aria-live="polite" hidden></div>
+</section>

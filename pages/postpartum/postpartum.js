@@ -69,22 +69,6 @@
         return new Date(Date.UTC(year, month - 1, day));
     }
 
-    function addCalendarMonths(date, months) {
-        const originalYear = date.getUTCFullYear();
-        const originalMonth = date.getUTCMonth();
-        const originalDay = date.getUTCDate();
-        const targetMonthIndex = originalMonth + months;
-        const targetYear = originalYear + Math.floor(targetMonthIndex / 12);
-        const targetMonth = ((targetMonthIndex % 12) + 12) % 12;
-        const lastDayOfTargetMonth = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
-
-        return new Date(Date.UTC(
-            targetYear,
-            targetMonth,
-            Math.min(originalDay, lastDayOfTargetMonth)
-        ));
-    }
-
     function calculatePostpartumDays(serviceDate, deliveryDate) {
         return Math.floor((serviceDate.getTime() - deliveryDate.getTime()) / MS_PER_DAY);
     }
@@ -96,22 +80,15 @@
             return { status: 'error', days };
         }
 
-        const oneMonthAfterDelivery = addCalendarMonths(deliveryDate, 1);
-        const threeMonthsAfterDelivery = addCalendarMonths(deliveryDate, 3);
-
-        if (serviceDate.getTime() <= oneMonthAfterDelivery.getTime()) {
-            return { status: '5P', days, oneMonthAfterDelivery, threeMonthsAfterDelivery };
+        if (days <= 30) {
+            return { status: '5P', days };
         }
 
-        if (serviceDate.getTime() <= threeMonthsAfterDelivery.getTime()) {
-            return { status: '5Q', days, oneMonthAfterDelivery, threeMonthsAfterDelivery };
+        if (days <= 92) {
+            return { status: '5Q', days };
         }
 
-        return { status: 'expired', days, oneMonthAfterDelivery, threeMonthsAfterDelivery };
-    }
-
-    function formatRocDate(date) {
-        return `民國${date.getUTCFullYear() - 1911}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日`;
+        return { status: 'expired', days };
     }
 
     function daysMarkup(days) {
@@ -123,7 +100,8 @@
         const serviceName = is5P ? '第一次產後健康照護' : '第二次產後健康照護';
         const code = is5P ? '5P' : '5Q';
         const cardSequence = is5P ? 'IC5P' : 'IC5Q';
-        const schedule = is5P ? '產後1個月內，建議產後1～2週' : '產後3個月內，建議產後6～8週';
+        const applicableDays = is5P ? '產後第0～30天' : '產後第31～92天';
+        const recommendedSchedule = is5P ? '產後1～2週' : '產後6～8週';
         const subsidy = is5P ? '540元' : '450元';
 
         return `
@@ -140,7 +118,8 @@
                 </div>
             </div>
             <ul class="postpartum-details">
-                <li>時程：${schedule}</li>
+                <li>適用天數：${applicableDays}</li>
+                <li>建議時程：${recommendedSchedule}</li>
                 <li>醫療院所補助：${subsidy}</li>
             </ul>
             <p class="postpartum-note">本結果僅依日期判斷建議項目。實際申報前，仍須確認病人本胎是否已接受過相同服務，避免重複申報。</p>
@@ -162,11 +141,11 @@
             resultArea.classList.add('is-expired');
             resultArea.innerHTML = `
                 ${daysMarkup(result.days)}
-                <h3 class="postpartum-alert-title">已超過產後3個月的服務時程</h3>
+                <h3 class="postpartum-alert-title">已超過產後健康照護服務時程</h3>
                 <p>目前不可依日期直接判定為可申報5P或5Q。</p>
                 <ul class="postpartum-details">
-                    <li>5P期限：${formatRocDate(result.oneMonthAfterDelivery)}（含當日）</li>
-                    <li>5Q期限：${formatRocDate(result.threeMonthsAfterDelivery)}（含當日）</li>
+                    <li>5P適用天數：產後第0～30天</li>
+                    <li>5Q適用天數：產後第31～92天</li>
                 </ul>
                 <p class="postpartum-note">本結果僅依日期判斷建議項目。實際申報前，仍須確認病人本胎是否已接受過相同服務，避免重複申報。</p>
             `;
@@ -202,7 +181,6 @@
     initializePostpartumCalculator();
 
     window.PostpartumCalculatorTest = Object.freeze({
-        addCalendarMonths,
         calculatePostpartumDays,
         determinePostpartumService
     });

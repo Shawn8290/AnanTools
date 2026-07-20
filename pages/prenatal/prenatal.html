@@ -18,6 +18,48 @@
         color: #4a5568;
         margin-bottom: 20px;
     }
+    .prenatal-options {
+        border: 0;
+        margin: 0 0 22px;
+        padding: 0;
+    }
+    .prenatal-options legend {
+        color: #2d3748;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .prenatal-option-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .prenatal-option {
+        align-items: flex-start;
+        background: #f7fafc;
+        border: 1px solid #cbd5e0;
+        border-radius: 8px;
+        color: #2d3748;
+        cursor: pointer;
+        display: flex;
+        gap: 9px;
+        line-height: 1.45;
+        padding: 12px;
+    }
+    .prenatal-option:has(input:checked) {
+        background: #ebf8ff;
+        border-color: #3182ce;
+        box-shadow: 0 0 0 1px #3182ce;
+    }
+    .prenatal-option input {
+        flex: 0 0 auto;
+        margin-top: 4px;
+    }
+    .prenatal-upload-label {
+        color: #2d3748;
+        display: block;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
     .prenatal-container input[type="file"] {
         width: 100%;
         padding: 15px;
@@ -51,13 +93,59 @@
         border-radius: 8px;
         text-align: center;
     }
+    .prenatal-privacy-note {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 12px 0 0;
+    }
+    @media (max-width: 640px) {
+        .prenatal-container {
+            padding: 20px;
+        }
+        .prenatal-option-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <div class="tool-section prenatal-container">
-    <h2>產檢批次資料格式檢核 V1.2</h2>
-    <p>請上傳健保申報的 Excel 檔案 (.xlsx, .xls) 以進行格式與邏輯驗證：</p>
+    <h2>婦幼系統上傳檔案檢核</h2>
+    <p>請先選擇紀錄類型，再上傳婦幼系統批次匯入用的 Excel 檔案進行格式檢核。</p>
+
+    <fieldset class="prenatal-options">
+        <legend>檢核項目</legend>
+        <div class="prenatal-option-grid">
+            <label class="prenatal-option">
+                <input type="radio" name="prenatalRecordType" value="routine" checked>
+                <span>產前檢查常規項目紀錄</span>
+            </label>
+            <label class="prenatal-option">
+                <input type="radio" name="prenatalRecordType" value="diabetes-anemia">
+                <span>妊娠糖尿及貧血紀錄</span>
+            </label>
+            <label class="prenatal-option">
+                <input type="radio" name="prenatalRecordType" value="education">
+                <span>產前衛教指導紀錄</span>
+            </label>
+            <label class="prenatal-option">
+                <input type="radio" name="prenatalRecordType" value="ultrasound-first">
+                <span>產檢超音波紀錄(第一次)</span>
+            </label>
+            <label class="prenatal-option">
+                <input type="radio" name="prenatalRecordType" value="ultrasound-second">
+                <span>產檢超音波紀錄(第二次)</span>
+            </label>
+            <label class="prenatal-option">
+                <input type="radio" name="prenatalRecordType" value="ultrasound-third">
+                <span>產檢超音波紀錄(第三次)</span>
+            </label>
+        </div>
+    </fieldset>
     
+    <label class="prenatal-upload-label" for="uploadFile">選擇 Excel 檔案</label>
     <input type="file" id="uploadFile" accept=".xlsx, .xls">
-    
-    <div id="reportArea" style="margin-top: 25px;"></div>
+    <p id="prenatalModeHint" class="prenatal-privacy-note">此項目檢核成功後，會將資料每 30 筆拆分並下載 ZIP。</p>
+    <p class="prenatal-privacy-note">檔案只在此瀏覽器本機處理，不會上傳至伺服器。</p>
+
+    <div id="reportArea" aria-live="polite" style="margin-top: 25px;"></div>
 </div>

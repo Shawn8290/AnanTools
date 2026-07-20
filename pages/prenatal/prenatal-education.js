@@ -8,11 +8,12 @@
         validate(data) {
             const common = global.PrenatalCommon;
             const binary = ['0', '1'];
+            const triState = ['0', '1', '2'];
             const schema = [
                 { name: '衛教次數', required: true, values: ['1', '2'] },
                 { name: '指導日期', required: true, pattern: /^\d{4}-\d{2}-\d{2}$/, patternMessage: '必須為西元日期 YYYY-MM-DD' },
                 { name: '懷孕週數', required: true, maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '必須為整數' },
-                { name: '孕次', required: true, maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '必須為整數' },
+                { name: '孕次', maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '如有填寫，必須為整數' },
                 { name: '姓名', required: true, maxLength: 30 },
                 { name: '出生日期', required: true, pattern: /^\d{4}-\d{2}-\d{2}$/, patternMessage: '必須為西元日期 YYYY-MM-DD' },
                 { name: '身分證字號', required: true, maxLength: 10, pattern: /^[A-Z0-9]+$/, patternMessage: '必須為大寫半型英數字元' },
@@ -20,12 +21,12 @@
                 { name: '聯絡地址', required: true, maxLength: 60 },
                 { name: '聯絡方式(手機)', maxLength: 20 },
                 { name: '聯絡方式(住家)', maxLength: 20 },
-                { name: '1.是否吸菸', required: true, values: binary },
-                { name: '2.注意遠離二手菸環境', required: true, values: binary },
-                { name: '3.是否喝酒', required: true, values: binary },
-                { name: '4.是否嚼檳榔', required: true, values: binary },
-                { name: '5.是否曾使用毒品或濫用藥物', required: true, values: binary },
-                { name: '6.是否咳嗽', required: true, values: binary },
+                { name: '1.是否吸菸', required: true, values: triState },
+                { name: '2.注意遠離二手菸環境', required: true, values: triState },
+                { name: '3.是否喝酒', required: true, values: triState },
+                { name: '4.是否嚼檳榔', required: true, values: triState },
+                { name: '5.是否曾使用毒品或濫用藥物', required: true, values: triState },
+                { name: '6.是否咳嗽', required: true, values: triState },
                 { name: '心情溫度計-憂鬱檢測_情緒', required: true, values: binary },
                 { name: '心情溫度計-憂鬱檢測_事物', required: true, values: binary },
                 { name: '醫療史', required: true, values: binary },

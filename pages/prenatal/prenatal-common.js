@@ -59,6 +59,7 @@
                 if (!value) return;
                 if (field.maxLength && value.length > field.maxLength) {
                     errors.push(`第 ${rowNumber} 列：【${field.name}】資料為「${value}」，長度不可超過 ${field.maxLength}。`);
+                    return;
                 }
                 if (field.pattern && !field.pattern.test(value)) {
                     errors.push(`第 ${rowNumber} 列：【${field.name}】資料為「${value}」，${field.patternMessage || '格式不正確'}。`);
@@ -116,7 +117,7 @@
             { name: '預產期', required: true, maxLength: 7, pattern: /^\d{7}$/, patternMessage: '必須為 7 碼民國日期 YYYMMDD' },
             { name: '身高', required: true, maxLength: 3, pattern: /^\d{1,3}$/, patternMessage: '必須為公分整數' },
             { name: '體重', required: true, maxLength: 3, pattern: /^\d{1,3}$/, patternMessage: '必須為公斤整數' },
-            { name: 'BMI值', required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d)?$/, patternMessage: '最多 3 位整數及 1 位小數' },
+            { name: 'BMI值', required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '最多 3 位整數及 2 位小數' },
             { name: '胎數', required: true, maxLength: 1, values: ['1', '2', '3'] },
             { name: '＿胎', headerAliases: ['胎'], maxLength: 2, required: (row, helper) => helper.text(row, 14) === '3', pattern: /^\d{1,2}$/, patternMessage: '多胞胎時必須填 1 至 2 位整數' },
             { name: '胎兒心跳', required: true, maxLength: 1, values: ['0', '1'] }

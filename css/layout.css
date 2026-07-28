@@ -66,3 +66,20 @@
     padding: 20px;
     background-color: var(--background-color);
 }
+
+/* 統一所有功能頁的主要內容置中方式 */
+.tool-section {
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.tool-section > h2 {
+    text-align: center;
+}
+
+.mounjaro-card,
+.wegovy-card {
+    margin-left: auto;
+    margin-right: auto;
+}

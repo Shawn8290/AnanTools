@@ -1,6 +1,8 @@
 (function (global) {
     'use strict';
 
+    const ROWS_PER_FILE = 15;
+
     const entryUrl = document.currentScript && document.currentScript.src;
     const baseUrl = entryUrl ? new URL('.', entryUrl) : new URL('./', global.location.href);
     const MODULES = [
@@ -102,9 +104,9 @@
         const zip = new global.JSZip();
         let partCount = 0;
 
-        for (let index = 0; index < dataRows.length; index += 30) {
+        for (let index = 0; index < dataRows.length; index += ROWS_PER_FILE) {
             partCount += 1;
-            const sheet = global.XLSX.utils.aoa_to_sheet([header].concat(dataRows.slice(index, index + 30)));
+            const sheet = global.XLSX.utils.aoa_to_sheet([header].concat(dataRows.slice(index, index + ROWS_PER_FILE)));
             const workbook = global.XLSX.utils.book_new();
             global.XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
             const output = global.XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -174,7 +176,7 @@
             }
 
             if (validator.createsDownload) {
-                showStatus(reportArea, '✅ 格式正確，正在每 30 筆分割並打包 ZIP...');
+                showStatus(reportArea, `✅ 格式正確，正在每 ${ROWS_PER_FILE} 筆分割並打包 ZIP...`);
                 const baseFileName = file.name.replace(/\.[^/.]+$/, '');
                 await splitAndDownload(result.rows, baseFileName, reportArea);
             } else {

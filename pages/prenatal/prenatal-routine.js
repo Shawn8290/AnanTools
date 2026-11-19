@@ -17,10 +17,10 @@
                 { name: '居住地址', required: true, maxLength: 60 },
                 { name: '產檢院所醫事機構代碼', required: true, maxLength: 10 },
                 { name: '檢查日期', required: true, maxLength: 7, pattern: /^\d{7}$/, patternMessage: '必須為 7 碼數字 YYYMMDD' },
-                { name: '檢查時之孕期週數', required: true, maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '必須為整數' },
-                { name: '身高', maxLength: 3, required: (row, helper) => helper.text(row, 13) === '1', pattern: /^\d{1,3}$/, patternMessage: '必須為公分整數' },
-                { name: '體重', required: true, maxLength: 3, pattern: /^\d{1,3}$/, patternMessage: '必須為公斤整數' },
-                { name: 'BMI值', maxLength: 5, pattern: /^\d{1,3}(?:\.\d{2})?$/, patternMessage: '必須為整數或含 2 位小數' },
+                { name: '檢查時之孕期週數', required: true, maxLength: 2, numeric: true, integer: true, pattern: /^\d{1,2}$/, patternMessage: '必須為整數' },
+                { name: '身高', maxLength: 3, required: (row, helper) => helper.text(row, 13) === '1', numeric: true, integer: true, pattern: /^\d{1,3}$/, patternMessage: '必須為公分整數' },
+                { name: '體重', required: true, maxLength: 3, numeric: true, integer: true, pattern: /^\d{1,3}$/, patternMessage: '必須為公斤整數' },
+                { name: 'BMI值', maxLength: 5, numeric: true, integer: false, pattern: /^\d{1,3}(?:\.\d{2})?$/, patternMessage: '必須為整數或含 2 位小數' },
                 { name: '產檢次數', headerAliases: ['健保卡就醫序號', '卡序'], maxLength: 2 }
             ];
             return common.validateSchema(data, schema, {

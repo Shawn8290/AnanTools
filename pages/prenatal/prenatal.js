@@ -88,13 +88,26 @@
         });
     }
 
-    function showValidationSuccess(reportArea, label, rowCount) {
-        clearReport(reportArea);
-        const message = document.createElement('div');
-        message.className = 'success-msg';
-        message.style.textAlign = 'left';
-        message.textContent = `✅ ${label}格式檢核通過，共 ${rowCount} 筆資料。未產生或下載任何副檔。`;
-        reportArea.appendChild(message);
+    function downloadValidatedRows(rows, baseFileName, reportArea) {
+        const workbook = global.XLSX.utils.book_new();
+        global.XLSX.utils.book_append_sheet(workbook, global.XLSX.utils.aoa_to_sheet(rows), 'Sheet1');
+        global.XLSX.writeFile(workbook, baseFileName + '_校正.xlsx');
+        showStatus(reportArea, '檢核通過，已匯出校正檔，共 ' + (rows.length - 1) + ' 筆資料。');
+    }
+
+    function showCorrections(reportArea, corrections) {
+        if (!corrections || !corrections.length) return;
+        const details = document.createElement('details');
+        const summary = document.createElement('summary');
+        summary.textContent = '已自動校正 ' + corrections.length + ' 個欄位（點開查看）';
+        details.appendChild(summary);
+        corrections.forEach((change) => {
+            const item = document.createElement('div');
+            item.style.whiteSpace = 'pre-wrap';
+            item.textContent = '第 ' + change.row + ' 列【' + change.field + '】：' + JSON.stringify(change.before) + ' → ' + JSON.stringify(change.after);
+            details.appendChild(item);
+        });
+        reportArea.appendChild(details);
     }
 
     async function splitAndDownload(rows, baseFileName, reportArea) {
@@ -172,6 +185,7 @@
             if (!reportArea.isConnected) return;
             if (result.errors.length > 0) {
                 showErrors(reportArea, result.errors);
+                showCorrections(reportArea, result.corrections);
                 return;
             }
 
@@ -180,8 +194,9 @@
                 const baseFileName = file.name.replace(/\.[^/.]+$/, '');
                 await splitAndDownload(result.rows, baseFileName, reportArea);
             } else {
-                showValidationSuccess(reportArea, validator.label, result.rows.length - 1);
+                downloadValidatedRows(result.rows, file.name.replace(/\.[^/.]+$/, ''), reportArea);
             }
+            showCorrections(reportArea, result.corrections);
         } catch (error) {
             if (reportArea.isConnected) showErrors(reportArea, [error.message]);
         } finally {

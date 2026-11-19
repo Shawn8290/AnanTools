@@ -145,6 +145,7 @@
     <label class="prenatal-upload-label" for="uploadFile">選擇 Excel 檔案</label>
     <input type="file" id="uploadFile" accept=".xlsx, .xls">
     <p id="prenatalModeHint" class="prenatal-privacy-note">此項目檢核成功後，會將資料每 15 筆拆分並下載 ZIP。</p>
+    <p class="prenatal-privacy-note">數值欄位會自動去除空白；整數欄位直接捨去小數，不四捨五入。通過檢核後自動匯出，常規項目維持拆分 ZIP，其餘項目匯出單一 Excel。</p>
     <p class="prenatal-privacy-note">檔案只在此瀏覽器本機處理，不會上傳至伺服器。</p>
 
     <div id="reportArea" aria-live="polite" style="margin-top: 25px;"></div>

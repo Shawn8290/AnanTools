@@ -12,8 +12,8 @@
             const schema = [
                 { name: '衛教次數', required: true, values: ['1', '2'] },
                 { name: '指導日期', required: true, pattern: /^\d{4}-\d{2}-\d{2}$/, patternMessage: '必須為西元日期 YYYY-MM-DD' },
-                { name: '懷孕週數', required: true, maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '必須為整數' },
-                { name: '孕次', maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '如有填寫，必須為整數' },
+                { name: '懷孕週數', required: true, maxLength: 2, numeric: true, integer: true, pattern: /^\d{1,2}$/, patternMessage: '必須為整數' },
+                { name: '孕次', maxLength: 2, numeric: true, integer: true, pattern: /^\d{1,2}$/, patternMessage: '如有填寫，必須為整數' },
                 { name: '姓名', required: true, maxLength: 30 },
                 { name: '出生日期', required: true, pattern: /^\d{4}-\d{2}-\d{2}$/, patternMessage: '必須為西元日期 YYYY-MM-DD' },
                 { name: '身分證字號', required: true, maxLength: 10, pattern: /^[A-Z0-9]+$/, patternMessage: '必須為大寫半型英數字元' },
@@ -38,11 +38,11 @@
                 { name: '醫事人員', required: true, maxLength: 30 },
                 { name: '院所代碼', required: true, maxLength: 10 },
                 { name: '國籍', required: true, values: ['1', '2', '3'] },
-                { name: '身高', required: true, maxLength: 3, pattern: /^\d{1,3}(?:\.0)?$/, patternMessage: '必須為公分數值' },
-                { name: '目前體重', required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為公斤數值' },
+                { name: '身高', required: true, maxLength: 3, numeric: true, integer: true, pattern: /^\d{1,3}(?:\.0)?$/, patternMessage: '必須為公分數值' },
+                { name: '目前體重', required: true, maxLength: 5, numeric: true, integer: false, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為公斤數值' },
                 { name: '最後一次月經日', required: true, pattern: /^\d{4}-\d{2}-\d{2}$/, patternMessage: '必須為西元日期 YYYY-MM-DD' },
-                { name: '懷孕前體重', required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為公斤數值' },
-                { name: 'BMI', required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為數值' }
+                { name: '懷孕前體重', required: true, maxLength: 5, numeric: true, integer: false, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為公斤數值' },
+                { name: 'BMI', required: true, maxLength: 5, numeric: true, integer: false, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為數值' }
             ];
             return common.validateSchema(data, schema, {
                 validateRow(row, rowNumber, errors) {

@@ -16,9 +16,17 @@
         return !row || row.every((value) => String(value ?? '').trim() === '');
     };
 
+    // Normalize measurements only; dates, identifiers and free text retain their meaning.
+    api.normalizeNumericValue = function (value, field) {
+        const compact = String(value ?? '').replace(/\s/g, '');
+        if (!/^\d+(?:\.\d+)?$/.test(compact)) return compact;
+        return field.integer ? compact.split('.')[0] : compact;
+    };
+
     api.validateSchema = function (data, schema, options) {
         const errors = [];
         const rows = [];
+        const corrections = [];
         const settings = options || {};
 
         if (!Array.isArray(data) || data.length === 0 || api.isEmptyRow(data[0])) {
@@ -41,8 +49,17 @@
         }
 
         for (let index = 1; index < data.length; index += 1) {
-            const row = data[index];
+            const row = data[index] && data[index].slice();
             if (api.isEmptyRow(row)) continue;
+            schema.forEach((field, columnIndex) => {
+                if (!field.numeric) return;
+                const original = row[columnIndex];
+                const normalized = api.normalizeNumericValue(original, field);
+                if (String(original ?? '') !== normalized) {
+                    corrections.push({ row: index + 1, field: field.name, before: String(original ?? ''), after: normalized });
+                    row[columnIndex] = normalized;
+                }
+            });
             rows.push(row);
             const rowNumber = index + 1;
 
@@ -81,7 +98,7 @@
         if (rows.length === 0) {
             errors.push('檔案內沒有可檢核的資料。');
         }
-        return { errors, rows: [header].concat(rows) };
+        return { errors, rows: [header].concat(rows), corrections };
     };
 
     api.commonPersonFields = function (dateLabel) {
@@ -102,7 +119,7 @@
             { name: '現居住地址', headerAliases: ['居住地址'], required: true, maxLength: 60 },
             { name: '產檢院所醫事機構代碼', required: true, maxLength: 10 },
             { name: dateLabel, required: true, maxLength: 7, pattern: /^\d{7}$/, patternMessage: '必須為 7 碼民國日期 YYYMMDD' },
-            { name: `${dateLabel === '採檢日期' ? '採檢' : '檢查'}時之孕期週數`, required: true, maxLength: 2, pattern: /^\d{1,2}$/, patternMessage: '必須為 1 至 2 位整數' }
+            { name: `${dateLabel === '採檢日期' ? '採檢' : '檢查'}時之孕期週數`, required: true, maxLength: 2, numeric: true, integer: true, pattern: /^\d{1,2}$/, patternMessage: '必須為 1 至 2 位整數' }
         ];
     };
 
@@ -115,16 +132,16 @@
     api.ultrasoundBaseFields = function () {
         return api.commonPersonFields('檢查日期').concat([
             { name: '預產期', required: true, maxLength: 7, pattern: /^\d{7}$/, patternMessage: '必須為 7 碼民國日期 YYYMMDD' },
-            { name: '身高', required: true, maxLength: 3, pattern: /^\d{1,3}$/, patternMessage: '必須為公分整數' },
-            { name: '體重', required: true, maxLength: 3, pattern: /^\d{1,3}$/, patternMessage: '必須為公斤整數' },
-            { name: 'BMI值', required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '最多 3 位整數及 2 位小數' },
+            { name: '身高', required: true, maxLength: 3, numeric: true, integer: true, pattern: /^\d{1,3}$/, patternMessage: '必須為公分整數' },
+            { name: '體重', required: true, maxLength: 3, numeric: true, integer: true, pattern: /^\d{1,3}$/, patternMessage: '必須為公斤整數' },
+            { name: 'BMI值', required: true, maxLength: 5, numeric: true, integer: false, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '最多 3 位整數及 2 位小數' },
             { name: '胎數', required: true, maxLength: 1, values: ['1', '2', '3'] },
-            { name: '＿胎', headerAliases: ['胎'], maxLength: 2, required: (row, helper) => helper.text(row, 14) === '3', pattern: /^\d{1,2}$/, patternMessage: '多胞胎時必須填 1 至 2 位整數' },
+            { name: '＿胎', headerAliases: ['胎'], maxLength: 2, required: (row, helper) => helper.text(row, 14) === '3', numeric: true, integer: true, pattern: /^\d{1,2}$/, patternMessage: '多胞胎時必須填 1 至 2 位整數' },
             { name: '胎兒心跳', required: true, maxLength: 1, values: ['0', '1'] }
         ]);
     };
 
     api.decimalField = function (name) {
-        return { name, required: true, maxLength: 5, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為整數或小數，且長度不可超過 5' };
+        return { name, required: true, maxLength: 5, numeric: true, integer: false, pattern: /^\d{1,3}(?:\.\d{1,2})?$/, patternMessage: '必須為整數或小數，且長度不可超過 5' };
     };
 })(window);
